@@ -1,0 +1,6 @@
+.moon/
+target/
+.repos/
+*.exe
+*.log
+.DS_Store
