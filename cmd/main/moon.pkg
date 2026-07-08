@@ -1,0 +1,7 @@
+import {
+  "moonbit-community/moon_datalog",
+  "moonbit-community/moon_datalog/lib/core",
+}
+options(
+  "is-main": true,
+)
