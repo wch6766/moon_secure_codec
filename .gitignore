@@ -1,6 +1,7 @@
-.moon/
 target/
-.repos/
-*.exe
-*.log
+.mooncakes/
+.moon/
+*.wasm
+*.wat
+*.map
 .DS_Store
