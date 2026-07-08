@@ -1,0 +1,4 @@
+// Digest package
+import {
+  "moonbit-community/moon_secure_codec/lib/codec",
+}

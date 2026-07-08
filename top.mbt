@@ -1,36 +1,44 @@
 ///|
-pub fn parse_and_eval(
-  input : String
-) -> Result[Map[String, @core.Relation], String] {
-  match @parser.parse_program(input) {
-    Ok(prog) =>
-      match @engine.eval_program_semi_naive(prog) {
-        Some(db) => Ok(db)
-        None =>
-          Err("Evaluation failed: unstratifiable program or negative cycle")
-      }
-    Err(msg) => Err(msg)
+/// Create a secure supply chain manifest and compute its Merkle root directly from memory buffers.
+pub fn create_manifest(
+  name : String,
+  version : String,
+  entries : Array[(String, Bytes)]
+) -> @manifest.Manifest {
+  let files : Array[@manifest.FileSnapshot] = []
+  for i = 0; i < entries.length(); i = i + 1 {
+    let (path, data) = entries[i]
+    files.push(@manifest.FileSnapshot::from_bytes(path, data))
   }
+  @manifest.Manifest::new(name, version, "2026-07-08T12:00:00Z", files)
 }
 
 ///|
-pub fn explain_query_plan(input : String) -> Result[String, String] {
-  match @parser.parse_program(input) {
-    Ok(prog) => Ok(@parser.explain_strata(prog))
-    Err(msg) => Err(msg)
-  }
+/// Compute SHA-256 hex digest for any byte array.
+pub fn sha256_hex(data : Bytes) -> String {
+  @digest.sha256_hex(data)
 }
 
 ///|
-pub fn new_policy_engine() -> @policy.PolicyEngine {
-  @policy.PolicyEngine::new()
+/// Compute XXHash64 content fingerprint for any byte array.
+pub fn xxhash64(data : Bytes) -> UInt64 {
+  @digest.xxhash64(data)
 }
 
 ///|
-pub fn query_reachability(
-  edges : @core.Relation,
-  from_id : Int64,
-  to_id : Int64
-) -> Bool {
-  @graph.reachable(edges, from_id, to_id)
+/// Encode bytes to Base64 (or Base64URL).
+pub fn to_base64(data : Bytes, url_safe~ : Bool = false) -> String {
+  @codec.to_base64(data, url_safe~)
+}
+
+///|
+/// Decode Base64 string to bytes.
+pub fn from_base64(s : String) -> Result[Bytes, String] {
+  @codec.from_base64(s)
+}
+
+///|
+/// Construct a Merkle tree directly from leaf bytes.
+pub fn make_merkle_tree(leaves : Array[Bytes]) -> @merkle.MerkleTree {
+  @merkle.MerkleTree::new(leaves)
 }

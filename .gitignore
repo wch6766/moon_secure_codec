@@ -1,7 +1,10 @@
 target/
+_build/
 .mooncakes/
 .moon/
+.gemini/
 *.wasm
 *.wat
 *.map
 .DS_Store
+_backup_moon_datalog/

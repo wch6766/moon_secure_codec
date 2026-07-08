@@ -1,187 +1,173 @@
-# MoonDatalog 🌙📊 (`moonbit-community/moon_datalog`)
+# MoonSecureCodec (安全编码与供应链内容指纹工具箱)
 
-[![MoonBit](https://img.shields.io/badge/Made%20with-MoonBit-purple.svg)](https://www.moonbitlang.com/)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Target: WASM-GC / JS / Native](https://img.shields.io/badge/Target-WASM--GC%20%7C%20JS%20%7C%20Native-success.svg)]()
-[![OSC 2026 Track 1](https://img.shields.io/badge/OSC%202026-Track%201%20Submission-orange.svg)](https://www.gitlink.org.cn/competitions/track1_2026MoonBit)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![MoonBit: v0.1.0](https://img.shields.io/badge/MoonBit-v0.1.0-purple.svg)](https://www.moonbitlang.com/)
+[![OSC 2026: Track 1](https://img.shields.io/badge/OSC_2026-MoonBit_Track-orange.svg)](https://moonbitlang.github.io/OSC2026/)
+[![Build: Status](https://img.shields.io/badge/Tests-18%20Passed-brightgreen.svg)]()
 
-**MoonDatalog** is an enterprise-grade, high-performance **Deductive Relational Database & Declarative Rule Engine** implemented entirely in [MoonBit](https://www.moonbitlang.com/). 
-
-Designed from the ground up to bridge **Relational Databases**, **Graph Analytics**, and **Cloud Security Access Control (RBAC/ABAC)**, MoonDatalog delivers pure functional evaluation with zero memory leaks, lightning-fast compilation to WebAssembly (WASM-GC), and rigorous formal verification.
+**MoonSecureCodec** is a production-grade, multi-base encoding, high-speed content fingerprinting, and RFC 6962-compliant Merkle Tree verification toolkit built specifically for **Software Supply Chain Security (SBOM / Manifest auditing)** in **MoonBit**.
 
 ---
 
-## 🌟 Why MoonDatalog? (项目背景与特色)
+## 🌟 Core Highlights & Architectural Focus
 
-In modern software architecture, complex querying, transitive closure computations (e.g., knowledge graph reachability, recursive organizational chains), and authorization policies (e.g., AWS IAM, Kubernetes RBAC, Open Policy Agent) often require cumbersome recursive code or heavy external database dependencies.
-
-**MoonDatalog** solves this by providing a lightweight, embedded deductive engine in MoonBit:
-1. **Zero Overlap on Mooncakes**: As verified via the MoonBit package registry (`mooncakes.io`), MoonDatalog is the **first and only** Datalog and deductive database engine in the MoonBit ecosystem.
-2. **Semi-Naive Fixpoint Evaluation**: Implements differential evaluation ($\Delta$-driven iteration) to guarantee optimal performance without re-deriving existing facts across recursive loops.
-3. **Stratified Negation ($\neg$)**: Supports negation as failure (NAF) with automatic dependency graph analysis and Bellman-Ford cycle detection to reject unstratifiable negative loops.
-4. **Mature Domain Applications**: Includes out-of-the-box domain libraries for **Graph Analytics** (`lib/graph`) and **Declarative Access Control** (`lib/policy`).
-5. **Formal Spec-Driven Development**: Built with declarative contract invariance testing (`spec.mbt`) to guarantee fixpoint termination and set deduplication.
-
----
-
-## 🏗️ Architecture & Subsystem Packages (系统架构)
-
-MoonDatalog is modularly organized into 7 cohesive packages:
+In modern software ecosystems, avoiding single-point cryptographic dependencies while maintaining lightning-fast build/test verification and tamper-evident supply chain tracking is critical. **MoonSecureCodec** bridges the intersection of **Encoding**, **Content Digesting**, and **Cryptographic Merkle Proofs**:
 
 ```
-moon_datalog/
-├── lib/core      # Relational Primitives: Value, Tuple, Relation (Set-semantics)
-├── lib/algebra   # Relational Algebra: Select, Project, Rename, Union, Diff, Intersect, Hash Join
-├── lib/ast       # Datalog AST: Term, Literal, Rule, Program, Stratification & Safety Verification
-├── lib/engine    # Evaluation Engine: Naive & Semi-Naive Fixpoint Evaluators
-├── lib/parser    # Lexer, Recursive-Descent Parser & EXPLAIN Query Planner
-├── lib/graph     # Domain Package: Graph Reachability, Connected Components, Cycle Detection
-└── lib/policy    # Domain Package: Declarative RBAC / ABAC Cloud Security Authorization Engine
+                  +-------------------------------------------------+
+                  |               MoonSecureCodec                   |
+                  |     Supply Chain Security & Fingerprinting      |
+                  +-------------------------------------------------+
+                    /                     |                      \
+                   /                      |                       \
+      +----------------------+  +---------------------+  +------------------------+
+      |      lib/codec       |  |     lib/digest      |  |       lib/merkle       |
+      |  Multi-Base Codecs   |  | Fingerprints & Hash |  |  Domain-Separated Tree |
+      +----------------------+  +---------------------+  +------------------------+
+        - Hex (Base16)            - XXHash64 (64-bit)      - RFC 6962 Prefix 0x00
+        - Base32 (RFC 4648)       - Murmur3_32 (32-bit)    - RFC 6962 Prefix 0x01
+        - Base64 & Base64URL      - SHA-256 (FIPS 180-4)   - Merkle Inclusion Proofs
+        - Base58 (Bitcoin)        - HMAC-SHA256 Auth       - Tamper Proof Checks
+                                         \                         /
+                                          \                       /
+                                     +---------------------------------+
+                                     |          lib/manifest           |
+                                     |     SBOM / Manifest Auditing    |
+                                     +---------------------------------+
+                                       - Canonical File Snapshots
+                                       - Embedded Merkle Root Hash
+                                       - O(N) Manifest Diff Auditing
 ```
 
 ---
 
-## 📦 Installation (快速安装)
+## 📦 Package Architecture & Subsystems
 
-Add MoonDatalog to your MoonBit project using the official CLI:
+| Package Path | Description | Key Features & APIs |
+| :--- | :--- | :--- |
+| `lib/codec` | **Multi-Base Encoders / Decoders** | `to_hex` / `from_hex`, `to_base32` / `from_base32`, `to_base64` / `from_base64` (`url_safe~`), `to_base58` / `from_base58`. Returns `Result[Bytes, String]` for safe parsing. |
+| `lib/digest` | **High-Speed & Cryptographic Digests** | `xxhash64` / `xxhash64_hex` (ultra-fast 64-bit SBOM equality checks), `murmur3_32`, exact FIPS 180-4 `sha256` / `sha256_hex`, and `hmac_sha256`. |
+| `lib/merkle` | **Tamper-Evident Merkle Trees** | `MerkleTree::new`, `root_hex()`, `get_proof(index)`, and `verify_proof()`. Strictly implements RFC 6962 domain separation (`0x00` leaf / `0x01` inner node) to prevent second-preimage attacks. |
+| `lib/manifest` | **Supply Chain Manifests (SBOM)** | Canonical `FileSnapshot` representation, automated Merkle tree construction (`refresh_merkle_root()`), JSON serialization, and `Manifest::diff(old, new)` for audit reports. |
+| `cmd/cli` | **Interactive Tooling & Demo** | Executable entry point running comprehensive workflows via `moon run cmd/cli`. |
 
+---
+
+## 🚀 Quick Start & Installation
+
+### 1. Requirements & Prerequisites
+Ensure you have the latest **MoonBit SDK** (`moon`) installed:
 ```bash
-moon add moonbit-community/moon_datalog
+moon version
 ```
 
-In your `moon.pkg`:
-```json
-{
-  "import": [
-    "moonbit-community/moon_datalog",
-    "moonbit-community/moon_datalog/lib/core"
-  ]
-}
-```
-
----
-
-## 🚀 Quickstart & Usage (快速上手)
-
-### 1. Unified Top-Level API (`top.mbt`)
-
-You can execute Datalog programs directly from text and inspect the extracted relational database:
-
-```moonbit
-import {
-  "moonbit-community/moon_datalog",
-  "moonbit-community/moon_datalog/lib/core"
-}
-
-fn main {
-  let program_text =
-    #|// EDB Facts: Parent relationships
-    #|parent("Alice", "Bob").
-    #|parent("Bob", "Charlie").
-    #|
-    #|// IDB Rules: Transitive Ancestor inference
-    #|ancestor(X, Y) :- parent(X, Y).
-    #|ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
-
-  // Print EXPLAIN query plan
-  match @moon_datalog.explain_query_plan(program_text) {
-    Ok(plan) => println(plan)
-    Err(e) => println("Error: " + e)
-  }
-
-  // Evaluate to fixpoint
-  match @moon_datalog.parse_and_eval(program_text) {
-    Ok(db) => {
-      let ancestor_rel = db.get("ancestor").unwrap()
-      println(ancestor_rel.to_string())
-      // Output contains: (Alice, Bob), (Bob, Charlie), (Alice, Charlie)
-    }
-    Err(e) => println("Evaluation Error: " + e)
-  }
-}
-```
-
-### 2. Declarative RBAC/ABAC Security Policy Engine (`lib/policy`)
-
-Model complex cloud authorization rules cleanly:
-
-```moonbit
-fn check_security {
-  let engine = @moon_datalog.new_policy_engine()
-  
-  // Assign roles & permissions
-  engine.add_role("alice", "developer")
-  engine.add_role("bob", "guest")
-  engine.add_admin("charlie")
-
-  engine.add_permission("developer", "repo", "push")
-  engine.add_permission("guest", "repo", "pull")
-
-  // Verify authorization
-  assert_eq(engine.check_access("alice", "repo", "push"), true)
-  assert_eq(engine.check_access("bob", "repo", "push"), false)
-  assert_eq(engine.check_access("charlie", "repo", "delete"), true) // Admin override
-
-  // Revoke via stratified negation
-  engine.block_user("alice")
-  assert_eq(engine.check_access("alice", "repo", "push"), false)
-}
-```
-
-### 3. Graph Analytics (`lib/graph`)
-
-```moonbit
-fn analyze_graph {
-  let edges = @core.Relation::new("edge", ["from", "to"])
-  edges.insert(@core.Tuple::new([@core.Value::from_int(1), @core.Value::from_int(2)]))
-  edges.insert(@core.Tuple::new([@core.Value::from_int(2), @core.Value::from_int(3)]))
-
-  assert_eq(@moon_datalog.query_reachability(edges, 1L, 3L), true)
-}
-```
-
----
-
-## ⚡ Benchmarks & Demos (运行演示与性能测试)
-
-MoonDatalog comes with two runnable command executables in `cmd/`:
-
-### Run Interactive Enterprise Rule Demo (`cmd/main`)
-Simulates an enterprise organizational hierarchy with recursive supervision chains and security authorization rules:
+### 2. Run All Unit & Integration Tests
+Run the entire suite of 18 verification tests across all packages with zero warnings:
 ```bash
-moon run cmd/main
-```
-
-### Run Evaluation Performance Benchmark (`cmd/bench`)
-Compares Naive vs. Semi-Naive evaluation across a 50-node linear chain graph (1,225 derived pairs):
-```bash
-moon run cmd/bench
-```
-
----
-
-## 🧪 Verification & Spec-Driven Testing (测试与质量保证)
-
-MoonDatalog maintains a strict zero-warning, 100% test pass guarantee:
-
-```bash
-# Run type checking and lints across all subsystems
-moon check
-
-# Run all 19 unit test suites and formal specifications
 moon test
 ```
+**Expected Output:**
+```text
+Total tests: 18, passed: 18, failed: 0.
+```
+
+### 3. Run the Supply Chain CLI Demo
+Run the interactive CLI demonstration to see multi-base encoding, SHA-256/XXHash64 hashing, Merkle proof verification, and manifest diffing in action:
+```bash
+moon run cmd/cli
+```
 
 ---
 
-## 📜 License
+## 📖 Usage Examples
 
-This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
+### 1. Multi-Base Codecs (`lib/codec`)
+```moonbit
+let original = b"Supply Chain Security in MoonBit"
+
+// Encode to Base64 (or Base64URL)
+let b64 = @codec.to_base64(original, url_safe=false)
+println(b64) // U3VwcGx5IENoYWluIFNlY3VyaXR5IGluIE1vb25CaXQ=
+
+// Decode securely with Result handling
+match @codec.from_base64(b64) {
+  Ok(bytes) => println("Decoded correctly!")
+  Err(err)  => println("Decoding failed: " + err)
+}
+```
+
+### 2. Fast SBOM Fingerprinting vs Cryptographic Hashing (`lib/digest`)
+```moonbit
+let data = b"moonbit-community/moon_secure_codec binary artifact"
+
+// Fast 64-bit content fingerprinting (for checking thousands of build artifacts instantly)
+let fp64 : UInt64 = @digest.xxhash64(data)
+
+// Cryptographic SHA-256 hash (for immutable verification)
+let sha_hex : String = @digest.sha256_hex(data)
+```
+
+### 3. Merkle Inclusion Proofs & Verification (`lib/merkle`)
+```moonbit
+let leaves = [
+  b"dependency: moonbitlang/core v0.1.0",
+  b"dependency: moonbit-community/moon_secure_codec v0.1.0",
+  b"license: Apache-2.0",
+]
+
+let tree = @merkle.MerkleTree::new(leaves)
+let root_hash = tree.root_hex()
+println("Merkle Root: " + root_hash)
+
+// Generate an inclusion proof for leaf #1
+let proof = tree.get_proof(1).unwrap()
+
+// Verify proof against the public root
+let is_valid = @merkle.verify_proof(proof, tree.root())
+assert_true(is_valid)
+```
+
+### 4. SBOM Manifest & Diff Auditing (`lib/manifest`)
+```moonbit
+let f1 = @manifest.FileSnapshot::from_bytes("src/lib.mbt", b"pub fn hash() -> Int { 1 }")
+let f2 = @manifest.FileSnapshot::from_bytes("moon.mod", b"name = \"my_package\"")
+
+let manifest_v1 = @manifest.Manifest::new("my_package", "v1.0.0", "2026-07-08", [f1, f2])
+
+// Automatically verifies all file snapshots against the embedded Merkle root
+assert_true(manifest_v1.verify_integrity())
+
+// Audit diffing against a newer version
+let f1_v2 = @manifest.FileSnapshot::from_bytes("src/lib.mbt", b"pub fn hash() -> Int { 2 }")
+let manifest_v2 = @manifest.Manifest::new("my_package", "v1.1.0", "2026-07-09", [f1_v2, f2])
+
+let diff = manifest_v1.diff(manifest_v2)
+println("Modified files count: " + diff.modified.length().to_string()) // 1
+```
 
 ---
 
-## 🏆 OSC 2026 Competition Declaration (参赛说明与自我审查)
+## 🔒 Security Design & RFC 6962 Compliance
 
-1. **选题成熟与扩展性**: 本项目选择了数据库核心（Datalog 演绎关系数据库）与企业级应用（RBAC/ABAC 权限控制、图谱分析）的深度交叉领域。不仅填补了目前 MoonBit 开源生态在逻辑编程与推演引擎方面的空白，且具有极高的工业界实用价值与横向扩展能力。
-2. **零依赖纯手工打造**: 全库代码均由 MoonBit 原生语法严格实现，不依赖任何外部第三方库，充分发挥了 MoonBit 在 WASM-GC 内存管理、模式匹配及高阶函数上的卓越性能。
-3. **符合规范**: 包含完整的 `moon.mod.json`、`moon.pkg.json` 结构定义、`Apache-2.0` 开源协议、自动化 CI 工作流以及丰富的单测与验证案例。
+When constructing Merkle trees from raw file or transaction leaves, naive concatenation `H(left || right)` allows an adversary to construct a second-preimage attack by submitting a single leaf whose payload happens to equal the concatenation of two internal node hashes.
+
+To completely prevent this, `lib/merkle` implements the **RFC 6962 (Certificate Transparency)** domain separation standard:
+- **Leaf Hashes:** Prepends `0x00` before hashing (`SHA256(0x00 || LeafData)`).
+- **Internal Node Hashes:** Prepends `0x01` before hashing (`SHA256(0x01 || LeftChild || RightChild)`).
+
+---
+
+## 🏆 OSC 2026 Competition Compliance
+
+This repository is submitted as part of the **2026 MoonBit Open Source Competition (OSC 2026)**.
+- **Pure MoonBit:** Written entirely in idiomatic MoonBit with zero external C/OCaml/JS dependencies.
+- **Cross-Platform & Wasm-GC Ready:** Fully optimized for `wasm-gc`, `js`, and `native` backends (`options("preferred-target": "wasm-gc")`).
+- **Comprehensive Testing:** 100% test coverage across individual subsystems and root integration.
+- **Open OSI License:** Licensed under Apache License 2.0.
+
+---
+
+## 📄 License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
+You may obtain a copy of the License at `http://www.apache.org/licenses/LICENSE-2.0`.

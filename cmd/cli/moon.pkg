@@ -4,3 +4,6 @@ import {
   "moonbit-community/moon_secure_codec/lib/merkle",
   "moonbit-community/moon_secure_codec/lib/manifest",
 }
+options(
+  "is-main": true,
+)
