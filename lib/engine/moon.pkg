@@ -1,0 +1,4 @@
+import {
+  "moonbit-community/moon_datalog/lib/core",
+  "moonbit-community/moon_datalog/lib/ast",
+}
