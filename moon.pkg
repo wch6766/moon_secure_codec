@@ -1,0 +1,8 @@
+import {
+  "moonbit-community/moon_datalog/lib/core",
+  "moonbit-community/moon_datalog/lib/ast",
+  "moonbit-community/moon_datalog/lib/engine",
+  "moonbit-community/moon_datalog/lib/parser",
+  "moonbit-community/moon_datalog/lib/graph",
+  "moonbit-community/moon_datalog/lib/policy",
+}
