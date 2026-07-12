@@ -9,7 +9,7 @@
 | 参赛赛道 | 2026 MoonBit 国产基础软件生态开源大赛，Track 1 |
 | 开源协议 | Apache License 2.0 |
 | GitHub 仓库 | https://github.com/wch6766/moon_secure_codec |
-| GitLink 仓库 | https://gitlink.org.cn/Wchch/moon_secure_codec |
+| GitLink 仓库 | https://gitlink.org.cn/Wchch/MoonSecureCodec |
 
 ## 2. 项目简介
 
