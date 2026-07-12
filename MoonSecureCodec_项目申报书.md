@@ -5,11 +5,11 @@
 | 项目项 | 内容 |
 | --- | --- |
 | 项目名称 | MoonSecureCodec |
-| 项目标识 | `moonbit-community/moon_secure_codec` |
+| 项目标识 | `Wchch/MoonSecureCodec` |
 | 参赛赛道 | 2026 MoonBit 国产基础软件生态开源大赛，Track 1 |
 | 开源协议 | Apache License 2.0 |
-| GitHub 仓库 | https://github.com/moonbit-community/moon_secure_codec |
-| GitLink 仓库 | https://gitlink.org.cn/Wchch/moonbit-community |
+| GitHub 仓库 | https://github.com/Wchch/MoonSecureCodec |
+| GitLink 仓库 | https://gitlink.org.cn/Wchch/MoonSecureCodec |
 
 ## 2. 项目简介
 

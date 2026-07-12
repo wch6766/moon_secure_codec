@@ -1,8 +1,8 @@
 import {
-  "moonbit-community/moon_secure_codec/lib/codec",
-  "moonbit-community/moon_secure_codec/lib/digest",
-  "moonbit-community/moon_secure_codec/lib/merkle",
-  "moonbit-community/moon_secure_codec/lib/manifest",
+  "Wchch/MoonSecureCodec/lib/codec",
+  "Wchch/MoonSecureCodec/lib/digest",
+  "Wchch/MoonSecureCodec/lib/merkle",
+  "Wchch/MoonSecureCodec/lib/manifest",
 }
 
 options(

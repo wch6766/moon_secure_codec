@@ -1,5 +1,5 @@
 // Manifest package
 import {
-  "moonbit-community/moon_secure_codec/lib/digest",
-  "moonbit-community/moon_secure_codec/lib/merkle",
+  "Wchch/MoonSecureCodec/lib/digest",
+  "Wchch/MoonSecureCodec/lib/merkle",
 }
