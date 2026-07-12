@@ -1,4 +1,4 @@
 // Digest package
 import {
-  "wch6766/moon_secure_codec/lib/codec",
+  "moonbit-community/moon_secure_codec/lib/codec",
 }

@@ -1,6 +1,6 @@
 import {
-  "wch6766/moon_secure_codec/lib/codec",
-  "wch6766/moon_secure_codec/lib/digest",
-  "wch6766/moon_secure_codec/lib/merkle",
-  "wch6766/moon_secure_codec/lib/manifest",
+  "moonbit-community/moon_secure_codec/lib/codec",
+  "moonbit-community/moon_secure_codec/lib/digest",
+  "moonbit-community/moon_secure_codec/lib/merkle",
+  "moonbit-community/moon_secure_codec/lib/manifest",
 }
