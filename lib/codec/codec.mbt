@@ -70,7 +70,7 @@ pub fn to_base32(bytes : Bytes) -> String {
     let idx = (buffer << (5 - bits_left)) & 0x1F
     buf.write_char(alphabet[idx])
   }
-  let pad_count = match (bytes.length() * 8) % 40 {
+  let pad_count = match bytes.length() * 8 % 40 {
     8 => 6
     16 => 4
     24 => 3
@@ -125,7 +125,7 @@ fn base32_val(c : UInt16) -> Int? {
 
 ///|
 /// Convert byte array to Base64 (or Base64URL when url_safe=true) string.
-pub fn to_base64(bytes : Bytes, url_safe~ : Bool = false) -> String {
+pub fn to_base64(bytes : Bytes, url_safe? : Bool = false) -> String {
   let std_alphabet = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
     'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
@@ -172,7 +172,10 @@ pub fn from_base64(s : String) -> Result[Bytes, String] {
   let out_list : Array[Byte] = []
   for i = 0; i < s.length(); i = i + 1 {
     let ci = s[i].to_int()
-    if ci == '='.to_int() || ci == ' '.to_int() || ci == '\n'.to_int() || ci == '\r'.to_int() {
+    if ci == '='.to_int() ||
+      ci == ' '.to_int() ||
+      ci == '\n'.to_int() ||
+      ci == '\r'.to_int() {
       continue
     }
     match base64_val(s[i]) {

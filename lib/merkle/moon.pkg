@@ -1,5 +1,5 @@
 // Merkle package
 import {
-  "moonbit-community/moon_secure_codec/lib/codec",
-  "moonbit-community/moon_secure_codec/lib/digest",
+  "wch6766/moon_secure_codec/lib/codec",
+  "wch6766/moon_secure_codec/lib/digest",
 }

@@ -8,3 +8,4 @@ _build/
 *.map
 .DS_Store
 _backup_moon_datalog/
+pkg.generated.mbti

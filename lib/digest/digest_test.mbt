@@ -1,10 +1,14 @@
 ///|
 test "sha256_known_vectors" {
   let empty_hash = sha256_hex(b"")
-  assert_eq(empty_hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+  assert_eq(
+    empty_hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  )
 
   let abc_hash = sha256_hex(b"abc")
-  assert_eq(abc_hash, "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+  assert_eq(
+    abc_hash, "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+  )
 }
 
 ///|
@@ -29,7 +33,7 @@ test "murmur3_fast_hash" {
 ///|
 test "hmac_sha256_integrity" {
   let key = b"SecretSupplyChainKey"
-  let msg = b"Package: moonbit-community/moon_secure_codec v0.1.0"
+  let msg = b"Package: wch6766/moon_secure_codec v0.1.0"
   let mac1 = hmac_sha256_hex(key, msg)
   let mac2 = hmac_sha256_hex(key, msg)
   let mac3 = hmac_sha256_hex(b"WrongKey", msg)

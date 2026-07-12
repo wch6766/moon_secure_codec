@@ -1,0 +1,68 @@
+name: MoonBit CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: MoonBit ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install MoonBit (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install MoonBit (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Toolchain info
+        shell: bash
+        run: |
+          moon version --all
+
+      - name: moon check
+        shell: bash
+        run: |
+          moon check --deny-warn
+
+      - name: moon fmt
+        shell: bash
+        run: |
+          if moon fmt --help | grep -q -- '--deny-warn'; then
+            moon fmt --deny-warn
+          else
+            moon fmt --check
+          fi
+
+      - name: moon info
+        shell: bash
+        run: |
+          if moon info --help | grep -q -- '--deny-warn'; then
+            moon info --deny-warn
+          else
+            moon info
+          fi
+
+      - name: moon test
+        shell: bash
+        run: |
+          moon test --deny-warn

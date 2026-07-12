@@ -3,7 +3,7 @@
 pub fn create_manifest(
   name : String,
   version : String,
-  entries : Array[(String, Bytes)]
+  entries : Array[(String, Bytes)],
 ) -> @manifest.Manifest {
   let files : Array[@manifest.FileSnapshot] = []
   for i = 0; i < entries.length(); i = i + 1 {
@@ -27,7 +27,7 @@ pub fn xxhash64(data : Bytes) -> UInt64 {
 
 ///|
 /// Encode bytes to Base64 (or Base64URL).
-pub fn to_base64(data : Bytes, url_safe~ : Bool = false) -> String {
+pub fn to_base64(data : Bytes, url_safe? : Bool = false) -> String {
   @codec.to_base64(data, url_safe~)
 }
 

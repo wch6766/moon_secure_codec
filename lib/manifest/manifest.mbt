@@ -37,7 +37,13 @@ pub fn FileSnapshot::from_bytes(path : String, data : Bytes) -> FileSnapshot {
 ///|
 /// Serialize a FileSnapshot to a canonical byte representation for Merkle tree hashing.
 pub fn FileSnapshot::canonical_bytes(self : FileSnapshot) -> Bytes {
-  let s = self.path + ":" + self.size.to_string() + ":" + self.hash_xx64.to_string() + ":" + self.hash_sha256
+  let s = self.path +
+    ":" +
+    self.size.to_string() +
+    ":" +
+    self.hash_xx64.to_string() +
+    ":" +
+    self.hash_sha256
   let buf : Array[Byte] = []
   for i = 0; i < s.length(); i = i + 1 {
     buf.push(s[i].to_int().to_byte())
@@ -51,7 +57,7 @@ pub fn Manifest::new(
   name : String,
   version : String,
   created_at : String,
-  files : Array[FileSnapshot]
+  files : Array[FileSnapshot],
 ) -> Manifest {
   let manifest = { name, version, created_at, files, merkle_root: "" }
   manifest.refresh_merkle_root()
@@ -89,8 +95,12 @@ pub fn Manifest::to_json_string(self : Manifest) -> String {
   buf.write_string("{\n")
   buf.write_string("  \"name\": \"" + escape_json(self.name) + "\",\n")
   buf.write_string("  \"version\": \"" + escape_json(self.version) + "\",\n")
-  buf.write_string("  \"created_at\": \"" + escape_json(self.created_at) + "\",\n")
-  buf.write_string("  \"merkle_root\": \"" + escape_json(self.merkle_root) + "\",\n")
+  buf.write_string(
+    "  \"created_at\": \"" + escape_json(self.created_at) + "\",\n",
+  )
+  buf.write_string(
+    "  \"merkle_root\": \"" + escape_json(self.merkle_root) + "\",\n",
+  )
   buf.write_string("  \"files\": [\n")
   for i = 0; i < self.files.length(); i = i + 1 {
     let f = self.files[i]
@@ -98,7 +108,9 @@ pub fn Manifest::to_json_string(self : Manifest) -> String {
     buf.write_string("      \"path\": \"" + escape_json(f.path) + "\",\n")
     buf.write_string("      \"size\": " + f.size.to_string() + ",\n")
     buf.write_string("      \"hash_xx64\": " + f.hash_xx64.to_string() + ",\n")
-    buf.write_string("      \"hash_sha256\": \"" + escape_json(f.hash_sha256) + "\"\n")
+    buf.write_string(
+      "      \"hash_sha256\": \"" + escape_json(f.hash_sha256) + "\"\n",
+    )
     if i + 1 < self.files.length() {
       buf.write_string("    },\n")
     } else {
@@ -136,11 +148,10 @@ pub fn Manifest::diff(self : Manifest, other : Manifest) -> ManifestDiff {
   for i = 0; i < self.files.length(); i = i + 1 {
     let f_old = self.files[i]
     match find_file_by_path(other.files, f_old.path) {
-      Some(f_new) => {
+      Some(f_new) =>
         if f_old.hash_sha256 != f_new.hash_sha256 || f_old.size != f_new.size {
           modified.push(f_new)
         }
-      }
       None => removed.push(f_old)
     }
   }
@@ -157,7 +168,10 @@ pub fn Manifest::diff(self : Manifest, other : Manifest) -> ManifestDiff {
 }
 
 ///|
-fn find_file_by_path(files : Array[FileSnapshot], path : String) -> FileSnapshot? {
+fn find_file_by_path(
+  files : Array[FileSnapshot],
+  path : String,
+) -> FileSnapshot? {
   for i = 0; i < files.length(); i = i + 1 {
     if files[i].path == path {
       return Some(files[i])

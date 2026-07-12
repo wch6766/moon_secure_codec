@@ -1,58 +1,53 @@
-# OSC 2026 大赛参赛项目申报书
+# MoonSecureCodec 结项说明
 
----
+## 1. 项目信息
 
-### 一、 项目基本信息
+| 项目项 | 内容 |
+| --- | --- |
+| 项目名称 | MoonSecureCodec |
+| 项目标识 | `wch6766/moon_secure_codec` |
+| 参赛赛道 | 2026 MoonBit 国产基础软件生态开源大赛，Track 1 |
+| 开源协议 | Apache License 2.0 |
+| GitHub 仓库 | https://github.com/wch6766/moon_secure_codec |
+| GitLink 仓库 | https://gitlink.org.cn/Wchch/moon_secure_codec |
 
-| 申报项 | 详细内容 |
-| :--- | :--- |
-| **项目名称** | **MoonSecureCodec：安全编码与供应链内容指纹工具箱** |
-| **项目标识** | `Wchch/MoonSecureCodec` |
-| **参赛赛道** | **2026 MoonBit 国产开源生态大赛（OSC 2026）- Track 1 基础工具与生态扩展** |
-| **交叉选题** | **安全 (Security) + 编码 (Codec) + 哈希与证明 (Hash & Merkle Proofs)** |
-| **开源协议** | Apache License 2.0（遵循 OSI 认证开放协议，允许任意商业与衍生使用） |
-| **GitLink 仓库** | https://www.gitlink.org.cn/Wchch/MoonSecureCodec |
-| **GitHub 仓库** | https://github.com/wch6766/moon_secure_codec |
+## 2. 项目简介
 
----
+MoonSecureCodec 是一个用 MoonBit 编写的软件供应链安全工具库，核心能力覆盖：
 
-### 二、 项目简介与立项背景
+- 多进制编码与解码
+- 快速内容指纹与加密摘要
+- RFC 6962 风格 Merkle 树和包含证明
+- SBOM / 清单快照与差异审计
 
-**项目简介**：
-**MoonSecureCodec** 是专为 MoonBit 生态打造的工业级软件供应链内容指纹与安全验证核心基础库。系统精妙地融合了“**多进制编码、高速去重摘要、标准密码学哈希、RFC 6962 防二次原像攻击 Merkle 树以及 SBOM 软件清单差异审计**”五大核心能力。本项目采用 100% 纯 MoonBit 语言编写，零外部 C/JS/OCaml 语言依赖，全面跨平台并针对 `wasm-gc` 目标深度优化，旨在为现代构建系统、包管理器及去中心化应用提供轻量、高效且不可篡改的内容完整性保障机制。
+项目主体由 4 个库包和 1 个 CLI 演示组成，适合用于供应链完整性检查、构建产物校验和轻量级审计。
 
-**立项背景**：
-在现代软件供应链（Software Supply Chain）分发中，确保源码及构建产物未被中间人篡改或恶意投毒至关重要。传统方案往往依赖庞大的臃肿加密库，不仅构建缓慢且对 Wasm 运行环境支持不佳。同时，普通 Merkle 树构建中如果缺乏标准域分隔，极易遭遇**二次原像攻击 (Second-preimage attacks)**。本项目主动避开生态中已有的单一用途哈希库，精准聚焦“**软件供应链指纹与可信证据链**”，填补了 MoonBit 生态在规范化 SBOM 内容验证基础工具链上的空白。
+## 3. 工程结构
 
----
+| 路径 | 说明 |
+| --- | --- |
+| `lib/codec` | Hex、Base32、Base64、Base58 编解码 |
+| `lib/digest` | XXHash64、Murmur3、SHA-256、HMAC-SHA256 |
+| `lib/merkle` | RFC 6962 Merkle 树与包含证明 |
+| `lib/manifest` | 文件快照、Manifest 和差异报告 |
+| `cmd/cli` | 交互式演示程序 |
 
-### 三、 核心技术体系与创新点
+## 4. 结项自查
 
-1. **全场景多进制编码模块 (`lib/codec`)**
-   - 原生支持 **Hex (Base16)**、**Base32**（RFC 4648 标准规范，兼容大小写）、**Base64 / Base64URL**（支持可选 `url_safe~` 填充与未填充格式）以及比特币标准 **Base58**（全量保留前导零 `1` 语义）。全部 API 统一采用 `Result[Bytes, String]` 安全错误边际设计，彻底杜绝异常崩溃。
-2. **高速指纹与密码学摘要模块 (`lib/digest`)**
-   - 集成工业极速 **XXHash64** 与 **Murmur3_32** 非密码学指纹算法，在超大规模依赖包去重与等价性比对场景下速度提升数倍；同时实现严谨规范的 **SHA-256 (FIPS 180-4)** 与 **HMAC-SHA256** 消息鉴权运算。
-3. **RFC 6962 域分隔安全 Merkle 树 (`lib/merkle`)**
-   - 严格落实 **RFC 6962 (Certificate Transparency)** 国际安全域分隔规范：针对叶子节点哈希自动前置单字节 `0x00`，对分支节点配对哈希自动前置单字节 `0x01`，**在结构层面彻底杜绝二次原像伪造攻击**；支持精准的包容性证明生成 (`get_proof`) 与毫秒级客户端独立验签 (`verify_proof`)。
-4. **SBOM 软件清单对比与自动审计 (`lib/manifest`)**
-   - 一站式采集依赖项路径、文件大小及双端哈希 (`xxhash64` / `sha256`) 生成 `FileSnapshot` 唯一数字凭证，自动归集计算生成总清单 Merkle 根；核心提供 `Manifest::diff(old, new)` 差异对比算法，一秒定位版本升级间的**新增 (`added`)、剔除 (`removed`) 与篡改/修改 (`modified`)** 文件清单，生成可视化安全审计日志。
+以下检查项已经逐项对照：
 
----
+- 仓库根目录包含 `README.md`、`LICENSE`、MoonBit 源码和结项说明
+- 默认分支为 `main`
+- 许可证为 Apache-2.0
+- MoonBit 源码文件规模为 11 个
+- 当前测试数量为 18 个且全部通过
+- 本地已验证 `moon check --deny-warn` 与 `moon test --deny-warn`
+- CI 已补充，覆盖 `moon check`、`moon fmt --deny-warn`、`moon info --deny-warn`、`moon test`
 
-### 四、 适用场景与社会效益
+## 5. 结项备注
 
-- **包管理器依赖与产物验签**：可作为 MoonBit 下一代构建工具或社区分发平台（如 Mooncakes）的底层完整性校验核；
-- **软件供应链安全与 SBOM 追踪**：企业自动化 CI/CD 流水线可通过本工具箱实时比对代码快照清单，抵御投毒攻击；
-- **分布式协同与区块链存证**：提供轻量级的 Merkle Inclusion Proof 验证，无需下载整个依赖包即可在 Wasm-GC 前端完成数据真实性验签。
+仓库已整理为可提交状态，后续若需要继续扩展，只建议围绕以下方向迭代：
 
----
-
-### 五、 大赛自查与质量验收结论
-
-本项目已严格按照 OSC 2026 大赛官方评审要求执行终极自我审查：
-1. **纯净无依赖与跨平台优化**：完全原生代码实现，已配置 `options("preferred-target": "wasm-gc")`；
-2. **测试全覆盖**：底层编码、摘要、哈希树、清单与顶层门面共计 **18 个单元/集成测试 100% 一次性通过 (`18/18 passed, 0 failed`)**；
-3. **零告警卓越编译质量**：经最新 MoonBit 编译器工具链严格检验，全仓库达成 **0 Errors, 0 Warnings** 黄金标准；
-4. **高质量人读级注释与架构说明**：源码结构清晰、命名严谨、模块划分合理，具备极强的生产扩展性与示范价值。
-
-> **申报团队确认**：本项目代码与文档真实完整，技术架构成熟完备，各项指标满足并超越 OSC 2026 大赛结项验收标准，特此申报！
+- 增加更完整的输入校验和错误类型
+- 扩展更多 Manifest 审计规则
+- 为 CLI 增加更清晰的子命令和参数

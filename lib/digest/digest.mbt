@@ -1,7 +1,7 @@
 ///|
 /// Fast 64-bit non-cryptographic content fingerprint (XXHash64 algorithm).
 /// Extremely fast for checking supply chain manifest item equality.
-pub fn xxhash64(bytes : Bytes, seed~ : UInt64 = 0UL) -> UInt64 {
+pub fn xxhash64(bytes : Bytes, seed? : UInt64 = 0UL) -> UInt64 {
   let p1 : UInt64 = 11400714785074694791UL
   let p2 : UInt64 = 14029467366897019727UL
   let p3 : UInt64 = 1609587929392839161UL
@@ -44,7 +44,10 @@ pub fn xxhash64(bytes : Bytes, seed~ : UInt64 = 0UL) -> UInt64 {
   }
 
   if idx <= len - 4 {
-    let k1 = read_u32_le(bytes, idx).reinterpret_as_int().to_int64().reinterpret_as_uint64()
+    let k1 = read_u32_le(bytes, idx)
+      .reinterpret_as_int()
+      .to_int64()
+      .reinterpret_as_uint64()
     h64 = (h64 ^ (k1 * p1)) * p2 + p3
     h64 = rotl64(h64, 23) * p2 + p3
     idx = idx + 4
@@ -66,11 +69,13 @@ pub fn xxhash64(bytes : Bytes, seed~ : UInt64 = 0UL) -> UInt64 {
 }
 
 ///|
-pub fn xxhash64_hex(bytes : Bytes, seed~ : UInt64 = 0UL) -> String {
+pub fn xxhash64_hex(bytes : Bytes, seed? : UInt64 = 0UL) -> String {
   let h = xxhash64(bytes, seed~)
   let out : Array[Byte] = []
   for i = 7; i >= 0; i = i - 1 {
-    out.push(((h >> (i * 8)) & 0xFFUL).reinterpret_as_int64().to_int().to_byte())
+    out.push(
+      ((h >> (i * 8)) & 0xFFUL).reinterpret_as_int64().to_int().to_byte(),
+    )
   }
   @codec.to_hex(Bytes::from_array(out))
 }
@@ -88,7 +93,13 @@ fn xx_round(acc : UInt64, input : UInt64, p1 : UInt64, p2 : UInt64) -> UInt64 {
 }
 
 ///|
-fn xx_merge_round(acc : UInt64, val : UInt64, p1 : UInt64, p2 : UInt64, p4 : UInt64) -> UInt64 {
+fn xx_merge_round(
+  acc : UInt64,
+  val : UInt64,
+  p1 : UInt64,
+  p2 : UInt64,
+  p4 : UInt64,
+) -> UInt64 {
   let v = xx_round(0UL, val, p1, p2)
   let mut a = acc ^ v
   a = a * p1 + p4
@@ -105,7 +116,14 @@ fn read_u64_le(b : Bytes, offset : Int) -> UInt64 {
   let b5 = b[offset + 5].to_int().to_int64()
   let b6 = b[offset + 6].to_int().to_int64()
   let b7 = b[offset + 7].to_int().to_int64()
-  let val : Int64 = b0 | (b1 << 8) | (b2 << 16) | (b3 << 24) | (b4 << 32) | (b5 << 40) | (b6 << 48) | (b7 << 56)
+  let val : Int64 = b0 |
+    (b1 << 8) |
+    (b2 << 16) |
+    (b3 << 24) |
+    (b4 << 32) |
+    (b5 << 40) |
+    (b6 << 48) |
+    (b7 << 56)
   val.reinterpret_as_uint64()
 }
 
@@ -120,7 +138,7 @@ fn read_u32_le(b : Bytes, offset : Int) -> UInt {
 
 ///|
 /// Fast 32-bit Murmur3 hash for compact indexing.
-pub fn murmur3_32(bytes : Bytes, seed~ : UInt = 0) -> UInt {
+pub fn murmur3_32(bytes : Bytes, seed? : UInt = 0) -> UInt {
   let c1 : UInt = 0xcc9e2d51
   let c2 : UInt = 0x1b873593
   let len = bytes.length()
@@ -191,14 +209,16 @@ pub fn sha256(bytes : Bytes) -> Bytes {
   let mut h7 : UInt = 0x5be0cd19
 
   let k : Array[UInt] = [
-    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4,
+    0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe,
+    0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f,
+    0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
+    0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
+    0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
+    0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116,
+    0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7,
+    0xc67178f2,
   ]
 
   let w : Array[UInt] = Array::make(64, 0)
@@ -274,7 +294,11 @@ fn rotr32(x : UInt, r : Int) -> UInt {
 
 ///|
 fn h64_to_u32(x : Int64) -> UInt {
-  (x & 0xFFFFFFFFL).reinterpret_as_uint64().reinterpret_as_int64().to_int().reinterpret_as_uint()
+  (x & 0xFFFFFFFFL)
+  .reinterpret_as_uint64()
+  .reinterpret_as_int64()
+  .to_int()
+  .reinterpret_as_uint()
 }
 
 ///|

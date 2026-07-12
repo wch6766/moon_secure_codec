@@ -96,7 +96,10 @@ pub fn MerkleTree::root_hex(self : MerkleTree) -> String {
 
 ///|
 /// Generate a Merkle inclusion proof for the leaf at the specified index.
-pub fn MerkleTree::get_proof(self : MerkleTree, index : Int) -> Result[MerkleProof, String] {
+pub fn MerkleTree::get_proof(
+  self : MerkleTree,
+  index : Int,
+) -> Result[MerkleProof, String] {
   if index < 0 || index >= self.leaves.length() {
     return Err("Index out of bounds: " + index.to_string())
   }
@@ -106,7 +109,7 @@ pub fn MerkleTree::get_proof(self : MerkleTree, index : Int) -> Result[MerklePro
 
   for l = 0; l < self.levels.length() - 1; l = l + 1 {
     let level_nodes = self.levels[l]
-    let is_right_node = (cur_idx % 2 == 1)
+    let is_right_node = cur_idx % 2 == 1
     if is_right_node {
       steps.push({ is_left: true, sibling_hash: level_nodes[cur_idx - 1] })
     } else {

@@ -1,8 +1,17 @@
 ///|
 test "manifest_creation_and_integrity" {
-  let f1 = FileSnapshot::from_bytes("src/main.mbt", b"fn main() { println(\"Hello\") }")
-  let f2 = FileSnapshot::from_bytes("moon.pkg", b"import { \"moonbitlang/core/digest\" }")
-  let manifest = Manifest::new("test_project", "v1.0.0", "2026-07-08T12:00:00Z", [f1, f2])
+  let f1 = FileSnapshot::from_bytes(
+    "src/main.mbt", b"fn main() { println(\"Hello\") }",
+  )
+  let f2 = FileSnapshot::from_bytes(
+    "moon.pkg", b"import { \"moonbitlang/core/digest\" }",
+  )
+  let manifest = Manifest::new(
+    "test_project",
+    "v1.0.0",
+    "2026-07-08T12:00:00Z",
+    [f1, f2],
+  )
 
   assert_true(manifest.merkle_root.length() == 64)
   assert_true(manifest.verify_integrity())
@@ -10,8 +19,12 @@ test "manifest_creation_and_integrity" {
 
 ///|
 test "manifest_tamper_detection" {
-  let f1 = FileSnapshot::from_bytes("src/utils.mbt", b"pub fn helper() -> Int { 42 }")
-  let manifest = Manifest::new("app_core", "v0.1.0", "2026-07-08T12:00:00Z", [f1])
+  let f1 = FileSnapshot::from_bytes(
+    "src/utils.mbt", b"pub fn helper() -> Int { 42 }",
+  )
+  let manifest = Manifest::new("app_core", "v0.1.0", "2026-07-08T12:00:00Z", [
+    f1,
+  ])
   assert_true(manifest.verify_integrity())
 
   // Tamper with file hash directly (simulating supply chain injection or corruption)
@@ -27,15 +40,23 @@ test "manifest_tamper_detection" {
 ///|
 test "manifest_diff_audit" {
   let f_base = FileSnapshot::from_bytes("README.md", b"# MoonSecureCodec v1.0")
-  let f_mod_old = FileSnapshot::from_bytes("src/lib.mbt", b"pub fn version() -> Int { 1 }")
+  let f_mod_old = FileSnapshot::from_bytes(
+    "src/lib.mbt", b"pub fn version() -> Int { 1 }",
+  )
   let f_rem = FileSnapshot::from_bytes("legacy.mbt", b"// old code")
 
-  let old_manifest = Manifest::new("my_pkg", "v1.0.0", "2026-07-01", [f_base, f_mod_old, f_rem])
+  let old_manifest = Manifest::new("my_pkg", "v1.0.0", "2026-07-01", [
+    f_base, f_mod_old, f_rem,
+  ])
 
-  let f_mod_new = FileSnapshot::from_bytes("src/lib.mbt", b"pub fn version() -> Int { 2 }")
+  let f_mod_new = FileSnapshot::from_bytes(
+    "src/lib.mbt", b"pub fn version() -> Int { 2 }",
+  )
   let f_added = FileSnapshot::from_bytes("SECURITY.md", b"# Security Policy")
 
-  let new_manifest = Manifest::new("my_pkg", "v1.1.0", "2026-07-08", [f_base, f_mod_new, f_added])
+  let new_manifest = Manifest::new("my_pkg", "v1.1.0", "2026-07-08", [
+    f_base, f_mod_new, f_added,
+  ])
 
   let diff = old_manifest.diff(new_manifest)
   assert_eq(diff.added.length(), 1)
