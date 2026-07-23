@@ -33,8 +33,8 @@ moon run cmd/cli
 The repository includes a GitHub Actions workflow that runs the same quality gates used for release review:
 
 - `moon check --deny-warn`
-- `moon fmt --deny-warn`
-- `moon info --deny-warn`
+- `moon fmt --check`
+- `moon info`
 - `moon test --deny-warn`
 
 ## Self-Check
@@ -43,10 +43,9 @@ These are the current submission checks for this repository:
 
 - default branch: `main`
 - license: `Apache-2.0`
-- MoonBit source files: `11`
-- tracked files: `23`
-- test suite: `18` passing tests
-- local verification: `moon check --deny-warn` and `moon test --deny-warn` pass
+- MoonBit source files: `13`
+- test suite: `1018` passing tests
+- local verification: `moon check --deny-warn`, `moon fmt --check`, and `moon test --deny-warn` pass
 
 ## License
 
