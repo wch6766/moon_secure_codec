@@ -227,6 +227,56 @@ test "approval_record_binds_to_exact_merkle_root" {
 }
 
 ///|
+test "release_evidence_bundle_binds_and_verifies" {
+  let manifest = Manifest::new("evidence-demo", "v1.0.0", "2026-08-16", [
+    FileSnapshot::from_bytes("README.md", b"release"),
+  ])
+  let digest = @digest.sha256_hex(b"evidence")
+  let records = [
+    EvidenceRecord::new("src", Source, "source tree", digest, "now", "reviewed"),
+    EvidenceRecord::new(
+      "deps",
+      Dependency,
+      "dependency policy",
+      digest,
+      "now",
+      "locked",
+    ),
+    EvidenceRecord::new("build", Build, "moon check", digest, "now", "clean"),
+    EvidenceRecord::new("test", Test, "moon test", digest, "now", "1036 passed"),
+    EvidenceRecord::new(
+      "review",
+      Review,
+      "release gate",
+      digest,
+      "now",
+      "approved",
+    ),
+  ]
+  let bundle = manifest.evidence_bundle(records)
+  assert_true(bundle.binds_to(manifest))
+  assert_true(bundle.is_complete())
+  assert_true(bundle.verify())
+  assert_eq(bundle.record_count(), 5)
+  assert_eq(bundle.count_kind(Test), 1)
+  assert_eq(bundle.missing_kinds([Source, Review]).length(), 0)
+  assert_true(bundle.to_text().contains("valid=true"))
+  bundle.add(
+    EvidenceRecord::new("duplicate", Source, "extra", digest, "now", ""),
+  )
+  assert_true(bundle.verify())
+  bundle.records[0] = EvidenceRecord::new(
+    "duplicate",
+    Source,
+    "tampered",
+    digest,
+    "now",
+    "",
+  )
+  assert_false(bundle.verify())
+}
+
+///|
 test "manifest_selection_supports_incremental_verification" {
   let manifest = Manifest::new("pkg", "1.0.0", "now", [
     FileSnapshot::from_bytes("src/a.mbt", b"a"),

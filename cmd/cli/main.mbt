@@ -33,7 +33,7 @@ fn main {
 
   println("\n[3] RFC 6962 Domain-Separated Merkle Tree & Proof Generation:")
   let leaves = [
-    b"dependency: moonbitlang/core v0.1.0", b"dependency: wch6766/MoonSecureCodec v0.1.0",
+    b"dependency: moonbitlang/core v0.1.0", b"dependency: wch6766/MoonSecureCodec v0.1.1",
     b"license: Apache-2.0", b"target: wasm-gc",
   ]
   let tree = @merkle.MerkleTree::new(leaves)
@@ -53,7 +53,7 @@ fn main {
   )
   let m1 = @manifest.Manifest::new(
     "moon_secure_codec",
-    "v0.1.0",
+    "v0.1.1",
     "2026-07-08T12:00:00Z",
     [f1, f2],
   )
@@ -77,7 +77,7 @@ fn main {
   )
 
   let diff = m1.diff(m2)
-  println("\n[5] Supply Chain Manifest Diff Report (v0.1.0 -> v0.2.0):")
+  println("\n[5] Supply Chain Manifest Diff Report (v0.1.1 -> v0.2.0):")
   println(
     "  Added Files (" +
     diff.added.length().to_string() +
