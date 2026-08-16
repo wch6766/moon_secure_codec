@@ -38,3 +38,36 @@ test "merkle_proof_out_of_bounds" {
     Ok(_) => panic()
   }
 }
+
+///|
+test "merkle_tree_release_self_check" {
+  let tree = MerkleTree::new([b"one", b"two", b"three", b"four", b"five"])
+  assert_eq(tree.leaf_count(), 5)
+  assert_true(tree.verify_all())
+}
+
+///|
+test "rfc6962_reference_vectors_for_leaf_and_two_leaf_tree" {
+  let single = MerkleTree::new([b"a"])
+  assert_eq(
+    single.root_hex(),
+    "022a6979e6dab7aa5ae4c3e5e45f7e977112a7e63593820dbec1ec738a24f93c",
+  )
+  let pair = MerkleTree::new([b"a", b"b"])
+  assert_eq(
+    pair.root_hex(),
+    "b137985ff484fb600db93107c77b0365c80d78f5b429ded0fd97361d077999eb",
+  )
+}
+
+///|
+test "rfc6962_non_power_of_two_tree_proofs" {
+  let tree = MerkleTree::new([b"a", b"b", b"c"])
+  assert_eq(
+    tree.root_hex(),
+    "36642e73c2540ab121e3a6bf9545b0a24982cd830eb13d3cd19de3ce6c021ec1",
+  )
+  for index = 0; index < 3; index = index + 1 {
+    assert_true(verify_proof(tree.get_proof(index).unwrap(), tree.root()))
+  }
+}

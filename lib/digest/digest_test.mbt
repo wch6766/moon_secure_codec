@@ -41,3 +41,25 @@ test "hmac_sha256_integrity" {
   assert_eq(mac1, mac2)
   assert_true(mac1 != mac3)
 }
+
+///|
+test "constant_time_digest_comparisons_and_batch_api" {
+  let key = b"audit-key"
+  let message = b"release manifest"
+  let tag = hmac_sha256(key, message)
+  assert_true(constant_time_equal(tag, tag))
+  assert_false(constant_time_equal(tag, hmac_sha256(key, b"tampered")))
+  assert_true(verify_hmac_sha256(key, message, tag))
+  assert_true(constant_time_hex_equal(sha256_hex(b"abc"), sha256_hex(b"abc")))
+  assert_false(constant_time_hex_equal(sha256_hex(b"abc"), sha256_hex(b"abd")))
+  let batch = sha256_hex_batch([b"a", b"b", b"c"])
+  assert_eq(batch.length(), 3)
+  assert_eq(batch[0], sha256_hex(b"a"))
+}
+
+///|
+test "xxhash64_reference_vectors" {
+  assert_eq(xxhash64_hex(b""), "ef46db3751d8e999")
+  assert_eq(xxhash64_hex(b"a"), "d24ec4f1a98c6e5b")
+  assert_eq(xxhash64_hex(b"abc"), "44bc2cf5ad770999")
+}

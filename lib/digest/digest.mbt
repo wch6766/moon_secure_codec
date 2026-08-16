@@ -38,7 +38,7 @@ pub fn xxhash64(bytes : Bytes, seed? : UInt64 = 0UL) -> UInt64 {
   while idx <= len - 8 {
     let k1 = read_u64_le(bytes, idx)
     let k1_rot = rotl64(k1 * p2, 31) * p1
-    h64 = (h64 ^ k1_rot) * p1 + p4
+    h64 = h64 ^ k1_rot
     h64 = rotl64(h64, 27) * p1 + p4
     idx = idx + 8
   }
@@ -48,14 +48,14 @@ pub fn xxhash64(bytes : Bytes, seed? : UInt64 = 0UL) -> UInt64 {
       .reinterpret_as_int()
       .to_int64()
       .reinterpret_as_uint64()
-    h64 = (h64 ^ (k1 * p1)) * p2 + p3
+    h64 = h64 ^ (k1 * p1)
     h64 = rotl64(h64, 23) * p2 + p3
     idx = idx + 4
   }
 
   while idx < len {
     let k1 = bytes[idx].to_int().to_int64().reinterpret_as_uint64()
-    h64 = (h64 ^ (k1 * p5)) * p1
+    h64 = h64 ^ (k1 * p5)
     h64 = rotl64(h64, 11) * p1
     idx = idx + 1
   }

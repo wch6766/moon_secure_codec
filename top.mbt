@@ -42,3 +42,18 @@ pub fn from_base64(s : String) -> Result[Bytes, String] {
 pub fn make_merkle_tree(leaves : Array[Bytes]) -> @merkle.MerkleTree {
   @merkle.MerkleTree::new(leaves)
 }
+
+///|
+/// Audit a manifest with the default path, hash, duplicate, and root checks.
+pub fn audit_manifest(manifest : @manifest.Manifest) -> @manifest.AuditReport {
+  manifest.audit()
+}
+
+///|
+/// Audit dependency provenance and licenses using an explicit policy.
+pub fn audit_dependencies(
+  dependencies : Array[@manifest.Dependency],
+  policy : @manifest.LicensePolicy,
+) -> @manifest.DependencyAudit {
+  @manifest.audit_dependencies(dependencies, policy)
+}

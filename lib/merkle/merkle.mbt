@@ -17,6 +17,7 @@ pub(all) struct MerkleProof {
 pub(all) struct MerkleTree {
   leaves : Array[Bytes]
   levels : Array[Array[Bytes]]
+  root_hash : Bytes
 }
 
 ///|
@@ -47,51 +48,42 @@ fn hash_node(left : Bytes, right : Bytes) -> Bytes {
 pub fn MerkleTree::new(leaves : Array[Bytes]) -> MerkleTree {
   if leaves.length() == 0 {
     let empty_root = @digest.sha256(b"")
-    return { leaves: [], levels: [[empty_root]] }
+    return { leaves: [], levels: [], root_hash: empty_root }
   }
 
-  let l0 : Array[Bytes] = []
-  for i = 0; i < leaves.length(); i = i + 1 {
-    l0.push(hash_leaf(leaves[i]))
-  }
-
-  let levels : Array[Array[Bytes]] = [l0]
-  let mut cur = l0
-
-  while cur.length() > 1 {
-    let next_len = (cur.length() + 1) / 2
-    let next_level : Array[Bytes] = []
-    for i = 0; i < next_len; i = i + 1 {
-      let left = cur[i * 2]
-      let right = if i * 2 + 1 < cur.length() {
-        cur[i * 2 + 1]
-      } else {
-        cur[i * 2]
-      }
-      next_level.push(hash_node(left, right))
-    }
-    levels.push(next_level)
-    cur = next_level
-  }
-
-  { leaves, levels }
+  let root_hash = tree_hash_range(leaves, 0, leaves.length())
+  { leaves, levels: [[root_hash]], root_hash }
 }
 
 ///|
 /// Get the Merkle root hash as raw bytes.
 pub fn MerkleTree::root(self : MerkleTree) -> Bytes {
-  if self.levels.length() == 0 {
-    @digest.sha256(b"")
-  } else {
-    let top_idx = self.levels.length() - 1
-    self.levels[top_idx][0]
-  }
+  self.root_hash
 }
 
 ///|
 /// Get the Merkle root hash formatted as lowercase hex string.
 pub fn MerkleTree::root_hex(self : MerkleTree) -> String {
   @codec.to_hex(self.root())
+}
+
+///|
+/// Return the number of original leaves in the tree.
+pub fn MerkleTree::leaf_count(self : MerkleTree) -> Int {
+  self.leaves.length()
+}
+
+///|
+/// Generate and verify every inclusion proof against the current root.
+/// This is useful as a release-time self-check before publishing a manifest.
+pub fn MerkleTree::verify_all(self : MerkleTree) -> Bool {
+  for i = 0; i < self.leaves.length(); i = i + 1 {
+    match self.get_proof(i) {
+      Ok(proof) => if !verify_proof(proof, self.root()) { return false }
+      Err(_) => return false
+    }
+  }
+  true
 }
 
 ///|
@@ -103,28 +95,68 @@ pub fn MerkleTree::get_proof(
   if index < 0 || index >= self.leaves.length() {
     return Err("Index out of bounds: " + index.to_string())
   }
-  let leaf_hash = self.levels[0][index]
   let steps : Array[MerkleStep] = []
-  let mut cur_idx = index
-
-  for l = 0; l < self.levels.length() - 1; l = l + 1 {
-    let level_nodes = self.levels[l]
-    let is_right_node = cur_idx % 2 == 1
-    if is_right_node {
-      steps.push({ is_left: true, sibling_hash: level_nodes[cur_idx - 1] })
-    } else {
-      let sib_idx = cur_idx + 1
-      let sib_hash = if sib_idx < level_nodes.length() {
-        level_nodes[sib_idx]
-      } else {
-        level_nodes[cur_idx]
-      }
-      steps.push({ is_left: false, sibling_hash: sib_hash })
-    }
-    cur_idx = cur_idx / 2
+  if !build_proof(self.leaves, 0, self.leaves.length(), index, steps) {
+    return Err("Unable to construct proof for index: " + index.to_string())
   }
+  Ok({ leaf_hash: hash_leaf(self.leaves[index]), steps })
+}
 
-  Ok({ leaf_hash, steps })
+///|
+/// Compute the RFC 6962 tree hash using the largest-power-of-two split rule.
+fn tree_hash_range(leaves : Array[Bytes], start : Int, count : Int) -> Bytes {
+  if count == 0 {
+    return @digest.sha256(b"")
+  }
+  if count == 1 {
+    return hash_leaf(leaves[start])
+  }
+  let split = largest_power_of_two_less_than(count)
+  let left = tree_hash_range(leaves, start, split)
+  let right = tree_hash_range(leaves, start + split, count - split)
+  hash_node(left, right)
+}
+
+///|
+fn largest_power_of_two_less_than(value : Int) -> Int {
+  let mut power = 1
+  while power * 2 < value {
+    power = power * 2
+  }
+  power
+}
+
+///|
+/// Append the sibling path for a leaf using RFC 6962's recursive shape.
+fn build_proof(
+  leaves : Array[Bytes],
+  start : Int,
+  count : Int,
+  target : Int,
+  steps : Array[MerkleStep],
+) -> Bool {
+  if count == 1 {
+    return target == start
+  }
+  let split = largest_power_of_two_less_than(count)
+  if target < start + split {
+    if !build_proof(leaves, start, split, target, steps) {
+      return false
+    }
+    steps.push({
+      is_left: false,
+      sibling_hash: tree_hash_range(leaves, start + split, count - split),
+    })
+  } else {
+    if !build_proof(leaves, start + split, count - split, target, steps) {
+      return false
+    }
+    steps.push({
+      is_left: true,
+      sibling_hash: tree_hash_range(leaves, start, split),
+    })
+  }
+  true
 }
 
 ///|
