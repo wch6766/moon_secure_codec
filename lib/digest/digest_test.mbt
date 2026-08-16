@@ -33,7 +33,7 @@ test "murmur3_fast_hash" {
 ///|
 test "hmac_sha256_integrity" {
   let key = b"SecretSupplyChainKey"
-  let msg = b"Package: Wchch/MoonSecureCodec v0.1.0"
+  let msg = b"Package: wch6766/MoonSecureCodec v0.1.0"
   let mac1 = hmac_sha256_hex(key, msg)
   let mac2 = hmac_sha256_hex(key, msg)
   let mac3 = hmac_sha256_hex(b"WrongKey", msg)

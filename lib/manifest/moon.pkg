@@ -1,5 +1,5 @@
 // Manifest package
 import {
-  "Wchch/MoonSecureCodec/lib/digest",
-  "Wchch/MoonSecureCodec/lib/merkle",
+  "wch6766/MoonSecureCodec/lib/digest",
+  "wch6766/MoonSecureCodec/lib/merkle",
 }

@@ -1,10 +1,10 @@
-name = "Wchch/MoonSecureCodec"
+name = "wch6766/MoonSecureCodec"
 
 version = "0.1.0"
 
 readme = "README.md"
 
-repository = "https://github.com/Wchch/MoonSecureCodec"
+repository = "https://github.com/wch6766/moon_secure_codec"
 
 license = "Apache-2.0"
 

@@ -6,7 +6,7 @@ test "merkle_tree_empty" {
 
 ///|
 test "merkle_tree_single_leaf" {
-  let leaves = [b"Package #1: Wchch/MoonSecureCodec"]
+  let leaves = [b"Package #1: wch6766/MoonSecureCodec"]
   let tree = MerkleTree::new(leaves)
   let proof = tree.get_proof(0).unwrap()
   assert_true(verify_proof(proof, tree.root()))
@@ -15,7 +15,7 @@ test "merkle_tree_single_leaf" {
 ///|
 test "merkle_tree_multi_leaf_and_tamper_detection" {
   let leaves = [
-    b"dependency: moonbitlang/core v0.1.0", b"dependency: Wchch/MoonSecureCodec v0.1.0",
+    b"dependency: moonbitlang/core v0.1.0", b"dependency: wch6766/MoonSecureCodec v0.1.0",
     b"manifest_hash: 48656c6c6f204d6f6f6e426974", b"license: Apache-2.0", b"build_target: wasm-gc",
   ]
   let tree = MerkleTree::new(leaves)

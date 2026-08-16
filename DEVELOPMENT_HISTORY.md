@@ -9,7 +9,7 @@ The current project is MoonSecureCodec, a MoonBit supply-chain integrity toolkit
 
 ## Current scope boundary
 
-The current default branch contains no active Datalog/RBAC package, import, build target, or user-facing documentation. The `_backup_moon_datalog/` directory is ignored and is not part of the submitted repository. The current module name, package imports, README, CLI, and tests all refer to `Wchch/MoonSecureCodec`.
+The current default branch contains no active Datalog/RBAC package, import, build target, or user-facing documentation. The `_backup_moon_datalog/` directory is ignored and is not part of the submitted repository. The current module name, package imports, README, CLI, and tests all refer to `wch6766/MoonSecureCodec`.
 
 ## Development milestones
 

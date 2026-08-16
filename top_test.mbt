@@ -1,7 +1,7 @@
 ///|
 test "facade_integration_workflow" {
   let entries : Array[(String, Bytes)] = [
-    ("moon.mod", b"name = \"Wchch/MoonSecureCodec\""),
+    ("moon.mod", b"name = \"wch6766/MoonSecureCodec\""),
     ("src/lib.mbt", b"pub fn hash() -> Int { 1 }"),
     ("README.md", b"# MoonSecureCodec"),
   ]

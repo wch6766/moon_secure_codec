@@ -1,4 +1,4 @@
 // Digest package
 import {
-  "Wchch/MoonSecureCodec/lib/codec",
+  "wch6766/MoonSecureCodec/lib/codec",
 }

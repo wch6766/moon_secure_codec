@@ -27,7 +27,7 @@ MoonSecureCodec 是一个使用 MoonBit 实现的软件供应链完整性工具�
 
 ## 本地使用
 
-需要 MoonBit 0.10.3 或更新版本。本项目没有运行时第三方依赖，模块名是 `Wchch/MoonSecureCodec`；发布到 mooncakes.io 时应保持该命名空间与仓库信息一致。
+需要 MoonBit 0.10.3 或更新版本。本项目没有运行时第三方依赖，模块名是 `wch6766/MoonSecureCodec`；发布到 mooncakes.io 时应保持该命名空间与仓库信息一致。
 
 ```bash
 moon version --all
@@ -45,7 +45,7 @@ moon run cmd/cli
 ## 快速示例
 
 ```moonbit
-// In a package importing Wchch/MoonSecureCodec/lib/manifest:
+// In a package importing wch6766/MoonSecureCodec/lib/manifest:
 let artifact : Bytes = b"release artifact bytes"
 let file = @manifest.FileSnapshot::from_bytes("dist/app.bin", artifact)
 let manifest = @manifest.Manifest::new(

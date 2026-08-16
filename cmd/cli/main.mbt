@@ -33,7 +33,7 @@ fn main {
 
   println("\n[3] RFC 6962 Domain-Separated Merkle Tree & Proof Generation:")
   let leaves = [
-    b"dependency: moonbitlang/core v0.1.0", b"dependency: Wchch/MoonSecureCodec v0.1.0",
+    b"dependency: moonbitlang/core v0.1.0", b"dependency: wch6766/MoonSecureCodec v0.1.0",
     b"license: Apache-2.0", b"target: wasm-gc",
   ]
   let tree = @merkle.MerkleTree::new(leaves)
@@ -46,7 +46,7 @@ fn main {
 
   println("\n[4] SBOM / Supply Chain Manifest Generation & Audit Diffing:")
   let f1 = @manifest.FileSnapshot::from_bytes(
-    "moon.mod", b"name = \"Wchch/MoonSecureCodec\"",
+    "moon.mod", b"name = \"wch6766/MoonSecureCodec\"",
   )
   let f2 = @manifest.FileSnapshot::from_bytes(
     "lib/codec/codec.mbt", b"pub fn to_hex(bytes: Bytes) -> String",
