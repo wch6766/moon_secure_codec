@@ -225,3 +225,34 @@ test "approval_record_binds_to_exact_merkle_root" {
   assert_true(manifest.approval_payload().contains(manifest.merkle_root))
   assert_true(manifest.approval_finding(None) is Some(_))
 }
+
+///|
+test "manifest_selection_supports_incremental_verification" {
+  let manifest = Manifest::new("pkg", "1.0.0", "now", [
+    FileSnapshot::from_bytes("src/a.mbt", b"a"),
+    FileSnapshot::from_bytes("src/b.mbt", b"bb"),
+    FileSnapshot::from_bytes("docs/guide.md", b"guide"),
+  ])
+  let source = manifest.select_directory("src")
+  assert_eq(source.file_count(), 2)
+  assert_eq(source.total_bytes, 3L)
+  assert_true(source.paths()[0] == "src/a.mbt")
+  assert_true(source.source_is(manifest))
+  assert_true(source.merkle_root().length() == 64)
+  assert_true(source.to_text().contains("files=2"))
+  assert_true(source.has_complete_digests())
+  assert_eq(source.largest().unwrap().path, "src/b.mbt")
+  assert_eq(source.slice(1, 1).unwrap().paths()[0], "src/b.mbt")
+  assert_eq(manifest.select_large_files(3L).file_count(), 1)
+  assert_true(source.contains_path("src/a.mbt"))
+  assert_eq(source.valid_sizes().file_count(), 2)
+
+  let docs = manifest.select_suffixes([".md"])
+  assert_eq(docs.file_count(), 1)
+  assert_false(docs.is_empty())
+  assert_eq(manifest.select_batch(1, 1).unwrap().file_count(), 1)
+  match manifest.select_batch(99, 1) {
+    Err(_) => ()
+    Ok(_) => panic()
+  }
+}

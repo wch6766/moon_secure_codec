@@ -4,10 +4,10 @@ MoonSecureCodec 是一个使用 MoonBit 实现的软件供应链完整性工具�
 
 ## 能力范围
 
-- `lib/codec`：Hex、Base32、Base64、Base64URL、Base58，以及带前缀的 Multibase 编解码。
+- `lib/codec`：Hex、Base32、Base64、Base64URL、Base58、Multibase、CRC32 和规范 LEB128/Varint 编解码。
 - `lib/digest`：XXHash64、Murmur3-32、SHA-256、HMAC-SHA256、批量摘要和恒时摘要比较。
 - `lib/merkle`：带叶子/节点域分离的 Merkle 树、包含证明、全量证明自检和 RFC 6962 风格根计算。
-- `lib/manifest`：文件快照、确定性序列化、Merkle 根、版本差异、路径/哈希/重复项/生成物审计。
+- `lib/manifest`：文件快照、确定性序列化、Merkle 根、版本差异、增量清单选择，以及路径/哈希/重复项/生成物审计。
 - `lib/manifest` 依赖策略：版本固定、许可证允许列表、上游来源和内容摘要检查。
 - `cmd/cli`：端到端演示编码、摘要、Merkle 证明、Manifest 差异和完整性校验。
 
@@ -40,7 +40,7 @@ moon run cmd/cli
 
 如果本机尚未安装 MoonBit，请按 [MoonBit 官方安装说明](https://www.moonbitlang.com/download/) 安装 CLI，然后在仓库根目录执行上述命令。项目不需要额外的包管理器、环境变量或数据库服务。
 
-当前本地验收基线：1034 个测试全部通过；项目 MoonBit 源码约 10813 行（不含 `_build/` 和备份目录），其中生产实现约 2589 行，测试覆盖约 8224 行。`moon check --deny-warn`、`moon test --deny-warn`、`moon fmt --check` 和 `moon info` 均通过。测试包含官方 XXHash64 向量、RFC 6962 单叶/双叶/三叶向量、空输入、非 ASCII 数据、非 2 的幂次叶子数、错误输入、越界证明、路径穿越、重复项、损坏根、发布策略、审批绑定和依赖合规边界。
+当前本地验收基线：1036 个测试全部通过；项目 MoonBit 源码约 11275 行（不含 `_build/` 和备份目录），其中生产实现达到 3000 行，测试覆盖约 8275 行。`moon check --deny-warn`、`moon test --deny-warn`、`moon fmt --check` 和 `moon info` 均通过。测试包含官方 XXHash64 向量、RFC 6962 单叶/双叶/三叶向量、Varint 边界、空输入、非 ASCII 数据、非 2 的幂次叶子数、错误输入、越界证明、路径穿越、重复项、损坏根、发布策略、审批绑定和依赖合规边界。
 
 ## 快速示例
 

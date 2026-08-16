@@ -87,3 +87,23 @@ test "crc32_transport_frame_roundtrip_and_tamper_detection" {
     Ok(_) => panic()
   }
 }
+
+///|
+test "canonical_varint_roundtrip_and_boundary_rejection" {
+  let values : Array[UInt64] = [
+    0UL, 1UL, 127UL, 128UL, 16_384UL, 0xFFFFFFFFFFFFFFFFUL,
+  ]
+  let encoded = encode_u64_varints(values)
+  assert_eq(decode_u64_varints(encoded, values.length()).unwrap(), values)
+  match decode_u64_varint(b"\x80\x00") {
+    Err(_) => ()
+    Ok(_) => panic()
+  }
+  match decode_u64_varints(encoded, values.length() + 1) {
+    Err(_) => ()
+    Ok(_) => panic()
+  }
+  assert_eq(u64_varint_size(127UL), 1)
+  assert_eq(u64_varint_size(128UL), 2)
+  assert_true(is_canonical_u64_varint(encode_u64_varint(16_384UL)))
+}
